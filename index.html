@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>COVID Vaccine Tracker — Roopa Srinivas</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root {
+    --serif: 'DM Serif Display', Georgia, serif;
+    --sans: 'DM Sans', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--sans); background: #0f172a; color: #f1f5f9; }
+
+  .serif { font-family: var(--serif); }
+  em { font-style: italic; color: #7dd3b0; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.1rem 2.5rem;
+    background: rgba(15,23,42,0.9);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .nav-logo { font-family: var(--serif); font-size: 1.1rem; color: #f1f5f9; text-decoration: none; }
+  .nav-links { display: flex; gap: 1.75rem; list-style: none; }
+  .nav-links a { font-size: 0.8rem; font-weight: 400; color: #94a3b8; text-decoration: none; letter-spacing: 0.06em; text-transform: uppercase; transition: color 0.2s; }
+  .nav-links a:hover { color: #7dd3b0; }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    display: flex; align-items: center;
+    padding-top: 5rem;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0f2d1f 100%);
+    position: relative; overflow: hidden;
+  }
+  #hero::before {
+    content: '';
+    position: absolute; top: -200px; right: -200px;
+    width: 600px; height: 600px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(45,95,74,0.25) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  #hero::after {
+    content: '';
+    position: absolute; bottom: -100px; left: -100px;
+    width: 400px; height: 400px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(30,64,175,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-label {
+    display: inline-block;
+    font-size: 0.72rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase;
+    color: #7dd3b0;
+    background: rgba(45,95,74,0.2);
+    border: 1px solid rgba(125,211,176,0.2);
+    padding: 0.3rem 0.8rem; border-radius: 999px;
+    margin-bottom: 1.5rem;
+  }
+  .hero-title {
+    font-family: var(--serif);
+    font-size: clamp(3rem, 8vw, 5.5rem);
+    line-height: 1.05;
+    color: #f1f5f9;
+    margin-bottom: 1.5rem;
+  }
+  .hero-title em { color: #7dd3b0; }
+  .hero-desc {
+    font-size: 1.1rem; font-weight: 300; line-height: 1.8;
+    color: #94a3b8; max-width: 560px; margin-bottom: 1.5rem;
+  }
+
+  /* ARCHIVE NOTICE */
+  .archive-notice {
+    display: flex; gap: 0.75rem; align-items: flex-start;
+    padding: 0.9rem 1.1rem;
+    background: rgba(234,179,8,0.08);
+    border: 1px solid rgba(234,179,8,0.25);
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    max-width: 560px;
+  }
+  .archive-notice p { font-size: 0.825rem; color: #fbbf24; line-height: 1.6; font-weight: 300; }
+  .archive-notice strong { font-weight: 500; }
+
+  .hero-btns { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    padding: 0.7rem 1.5rem; border-radius: 6px;
+    background: #2d5f4a; color: #fff;
+    font-size: 0.875rem; font-weight: 500; text-decoration: none;
+    transition: background 0.2s;
+  }
+  .btn-primary:hover { background: #1e4234; }
+  .btn-ghost {
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    padding: 0.7rem 1.5rem; border-radius: 6px;
+    background: rgba(255,255,255,0.05); color: #94a3b8;
+    border: 1px solid rgba(255,255,255,0.1);
+    font-size: 0.875rem; font-weight: 400; text-decoration: none;
+    transition: all 0.2s;
+  }
+  .btn-ghost:hover { background: rgba(255,255,255,0.1); color: #f1f5f9; }
+
+  /* STAT PILLS in hero */
+  .hero-stats {
+    display: flex; gap: 1.5rem; flex-wrap: wrap;
+    margin-top: 3rem; padding-top: 2rem;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .hero-stat-num { font-family: var(--serif); font-size: 2rem; color: #7dd3b0; line-height: 1; }
+  .hero-stat-label { font-size: 0.75rem; color: #64748b; margin-top: 0.2rem; }
+
+  /* SECTIONS */
+  .section { padding: 6rem 0; }
+  .section-alt { background: #0d1a2a; }
+  .section-dark { background: #07101c; }
+  .container { max-width: 960px; margin: 0 auto; padding: 0 2rem; }
+
+  .section-eyebrow {
+    font-size: 0.72rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase;
+    color: #7dd3b0; margin-bottom: 0.75rem;
+  }
+  .section-heading {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    line-height: 1.15; color: #f1f5f9;
+    margin-bottom: 3rem;
+  }
+  .section-heading em { color: #7dd3b0; }
+
+  /* FEATURE CARDS */
+  .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; }
+  .feature-card {
+    padding: 1.75rem;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 10px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .feature-card:hover { border-color: rgba(125,211,176,0.3); transform: translateY(-2px); }
+  .feature-icon { font-size: 1.5rem; margin-bottom: 1rem; }
+  .feature-title { font-family: var(--serif); font-size: 1.15rem; color: #f1f5f9; margin-bottom: 0.5rem; line-height: 1.3; }
+  .feature-desc { font-size: 0.875rem; color: #64748b; font-weight: 300; line-height: 1.7; }
+
+  /* STEPS */
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; }
+  .step { position: relative; }
+  .step-num {
+    font-family: var(--serif); font-size: 3.5rem; color: rgba(125,211,176,0.15);
+    line-height: 1; margin-bottom: 0.75rem;
+  }
+  .step-title { font-weight: 500; font-size: 0.95rem; color: #f1f5f9; margin-bottom: 0.4rem; }
+  .step-desc { font-size: 0.85rem; color: #64748b; font-weight: 300; line-height: 1.65; }
+
+  /* TECH PILLS */
+  .tech-pills { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+  .tech-pill {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    font-size: 0.875rem; color: #cbd5e1; font-weight: 400;
+  }
+  .tech-pill-icon { font-size: 1rem; }
+
+  /* DEMO MOCKUP */
+  .mockup-shell {
+    background: #1a1a2e;
+    border-radius: 10px; overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+  }
+  .mockup-bar {
+    background: #252540;
+    padding: 0.6rem 1rem;
+    display: flex; align-items: center; gap: 0.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .dot { width: 11px; height: 11px; border-radius: 50%; }
+  .dot-r { background: #FF5F57; }
+  .dot-y { background: #FEBC2E; }
+  .dot-g { background: #2AC83E; }
+  .bar-title { font-size: 0.75rem; color: #6b7280; margin-left: 0.5rem; font-family: var(--sans); }
+
+  .app-header {
+    background: #1A3A5C;
+    padding: 0.75rem 1.25rem;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .app-title { font-family: var(--sans); font-size: 0.95rem; font-weight: 500; color: #E8F4FF; }
+  .app-sub { font-family: var(--sans); font-size: 0.7rem; color: #7FB3D9; }
+  .app-date { font-family: var(--sans); font-size: 0.7rem; color: #7FB3D9; }
+
+  .app-tabs { background: #1A3A5C; display: flex; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .app-tab { font-family: var(--sans); font-size: 0.75rem; padding: 0.5rem 1.25rem; color: #7FB3D9; border-bottom: 2px solid transparent; cursor: default; }
+  .app-tab.active { color: #E8F4FF; border-bottom-color: #4DA6E8; }
+
+  .app-body { display: grid; grid-template-columns: 1fr 210px; min-height: 320px; }
+  .map-area { background: #1E2E3E; padding: 0.75rem; }
+  .map-inner { background: #243447; border-radius: 4px; height: 260px; position: relative; overflow: hidden; }
+
+  .sidebar {
+    background: #16202C;
+    border-left: 1px solid rgba(255,255,255,0.07);
+    padding: 0.75rem;
+    display: flex; flex-direction: column; gap: 0.75rem;
+    overflow: hidden;
+  }
+  .sb-title { font-family: var(--sans); font-size: 0.62rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #4DA6E8; margin-bottom: 0.35rem; }
+  .sb-row { display: flex; justify-content: space-between; align-items: baseline; }
+  .sb-key { font-family: var(--sans); font-size: 0.68rem; color: #7FB3D9; }
+  .sb-val { font-family: var(--sans); font-size: 0.72rem; font-weight: 500; color: #E8F4FF; }
+  .sb-val.r { color: #FF6B6B; }
+  .sb-val.g { color: #4ADE80; }
+  .bar-track { height: 5px; background: rgba(255,255,255,0.08); border-radius: 3px; margin-top: 3px; }
+  .bar-fill { height: 100%; border-radius: 3px; }
+  .sb-divider { height: 1px; background: rgba(255,255,255,0.06); }
+  .brand-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.3rem 0.45rem;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 3px; margin-bottom: 0.25rem;
+  }
+  .brand-n { font-family: var(--sans); font-size: 0.67rem; color: #C5DCF0; }
+  .brand-p { font-family: var(--sans); font-size: 0.67rem; font-weight: 500; color: #4ADE80; }
+
+  /* DEMO STEPS */
+  .demo-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+  .demo-step {
+    padding: 1rem 1.1rem;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+  }
+  .demo-step-num { font-family: var(--serif); font-size: 1.5rem; color: rgba(125,211,176,0.4); line-height: 1; margin-bottom: 0.5rem; }
+  .demo-step-title { font-size: 0.8rem; font-weight: 500; color: #f1f5f9; margin-bottom: 0.3rem; }
+  .demo-step-desc { font-size: 0.78rem; color: #64748b; font-weight: 300; line-height: 1.6; }
+
+  .mockup-caption { font-size: 0.8rem; color: #475569; text-align: center; margin-top: 1rem; font-style: italic; }
+
+  /* CTA */
+  #cta { background: #07101c; text-align: center; padding: 6rem 0; }
+  #cta .section-heading { margin-bottom: 1rem; }
+  #cta p { color: #64748b; margin-bottom: 2.5rem; font-weight: 300; max-width: 480px; margin-left: auto; margin-right: auto; }
+
+  footer {
+    background: #050d18;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    text-align: center; padding: 1.5rem;
+    font-size: 0.78rem; color: #334155;
+  }
+  footer a { color: #475569; text-decoration: none; }
+  footer a:hover { color: #94a3b8; }
+
+  @media (max-width: 640px) {
+    nav { padding: 1rem 1.25rem; }
+    .nav-links { gap: 1rem; }
+    .app-body { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .section { padding: 4rem 0; }
+    .hero-stats { gap: 1rem; }
+  }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .fade1 { animation: fadeUp 0.6s 0.0s ease both; }
+  .fade2 { animation: fadeUp 0.6s 0.1s ease both; }
+  .fade3 { animation: fadeUp 0.6s 0.2s ease both; }
+  .fade4 { animation: fadeUp 0.6s 0.3s ease both; }
+  .fade5 { animation: fadeUp 0.6s 0.4s ease both; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="https://roopa-srinivas.github.io/">Roopa Srinivas</a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#demo">Demo</a></li>
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#tech">Tech Stack</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="container">
+    <div class="fade1">
+      <span class="hero-label">Data Visualization · High School Capstone · 2022</span>
+    </div>
+    <h1 class="hero-title fade2">
+      Tracking the<br><em>COVID vaccine</em><br>rollout, live.
+    </h1>
+    <p class="hero-desc fade3">
+      An interactive map dashboard pulling real-time CDC data on COVID cases, vaccines administered, and brand-specific statistics — making pandemic data accessible and understandable at a glance.
+    </p>
+    <div class="archive-notice fade3">
+      <p>📦 &nbsp;<strong>Archived project.</strong> Data was sourced from CDC API endpoints in 2021–2022. Those endpoints have since been restructured or retired, so the live data feed no longer functions — but the interface and logic remain as originally built.</p>
+    </div>
+    <div class="hero-btns fade4">
+      <a class="btn-primary" href="https://github.com/roopa-srinivas/COVIDVaccineTracker" target="_blank">View on GitHub →</a>
+      <a class="btn-ghost" href="https://roopa-srinivas.github.io/#projects">← Back to Projects</a>
+    </div>
+    <div class="hero-stats fade5">
+      <div>
+        <div class="hero-stat-num">50+</div>
+        <div class="hero-stat-label">States & territories tracked</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">3</div>
+        <div class="hero-stat-label">Vaccine brands profiled</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">Live</div>
+        <div class="hero-stat-label">CDC data integration</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">Java</div>
+        <div class="hero-stat-label">Built entirely in</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features" class="section section-alt">
+  <div class="container">
+    <p class="section-eyebrow">What it does</p>
+    <h2 class="section-heading">Built to make <em>public health data</em><br>actually public.</h2>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🗺️</div>
+        <h3 class="feature-title">Interactive Map Dashboard</h3>
+        <p class="feature-desc">A visual, state-by-state choropleth map showing COVID case counts and vaccination progress across the US — color-coded by coverage for fast pattern recognition.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💉</div>
+        <h3 class="feature-title">Live Vaccine Statistics</h3>
+        <p class="feature-desc">Real-time data on total doses administered, percentage of population vaccinated, and breakdown by dose number — pulled directly from the CDC's public data API.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🏭</div>
+        <h3 class="feature-title">Brand-Specific Profiles</h3>
+        <p class="feature-desc">Detailed fact cards for each authorized vaccine — Pfizer-BioNTech, Moderna, and J&J — covering efficacy rates, dosing schedules, and distribution share.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3 class="feature-title">Case Trend Comparison</h3>
+        <p class="feature-desc">Side-by-side view of case counts versus vaccination rates, revealing the relationship between rollout progress and outbreak trajectories over time.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" class="section">
+  <div class="container">
+    <p class="section-eyebrow">How it works</p>
+    <h2 class="section-heading">From raw API data<br>to <em>insight</em> in four steps.</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-title">Fetch from CDC API</div>
+        <p class="step-desc">On launch, the app makes HTTP requests to CDC public endpoints to pull the latest vaccination and case records for every US state and territory.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-title">Parse & structure the data</div>
+        <p class="step-desc">The JSON response is mapped into structured Java objects — one per state — containing case totals, dose counts, and brand-level distribution figures.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-title">Render the map</div>
+        <p class="step-desc">Data is fed into the map layer, rendering color-coded state regions. Click and hover interactions surface detailed per-state statistics.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-title">Explore brand details</div>
+        <p class="step-desc">A separate panel surfaces brand-specific fact sheets — combining live distribution data with curated vaccine information for full context.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TECH STACK -->
+<section id="tech" class="section section-alt">
+  <div class="container">
+    <p class="section-eyebrow">Tech stack</p>
+    <h2 class="section-heading">Built with <em>purpose-fit</em> tools.</h2>
+    <div class="tech-pills">
+      <div class="tech-pill"><span class="tech-pill-icon">☕</span> Java</div>
+      <div class="tech-pill"><span class="tech-pill-icon">🏛️</span> Java Swing / AWT</div>
+      <div class="tech-pill"><span class="tech-pill-icon">🌐</span> Java HTTP Client</div>
+      <div class="tech-pill"><span class="tech-pill-icon">📋</span> JSON Parsing</div>
+      <div class="tech-pill"><span class="tech-pill-icon">📊</span> CDC Data API</div>
+      <div class="tech-pill"><span class="tech-pill-icon">🚀</span> GitHub</div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO -->
+<section id="demo" class="section section-dark">
+  <div class="container">
+    <p class="section-eyebrow">Demo</p>
+    <h2 class="section-heading">What it looked like<br><em>when it ran.</em></h2>
+
+    <div class="demo-steps">
+      <div class="demo-step">
+        <div class="demo-step-num">Step 1</div>
+        <div class="demo-step-title">Open the map</div>
+        <p class="demo-step-desc">The app launches on the Map View tab with all 50 states color-coded by vaccination rate.</p>
+      </div>
+      <div class="demo-step">
+        <div class="demo-step-num">Step 2</div>
+        <div class="demo-step-title">Click a state</div>
+        <p class="demo-step-desc">Hover or click any state to see case count, vax rate, and daily dose totals in the sidebar.</p>
+      </div>
+      <div class="demo-step">
+        <div class="demo-step-num">Step 3</div>
+        <div class="demo-step-title">Switch to Vaccine Info</div>
+        <p class="demo-step-desc">The Vaccine Info tab shows brand-specific fact cards for Pfizer, Moderna, and J&J.</p>
+      </div>
+      <div class="demo-step">
+        <div class="demo-step-num">Step 4</div>
+        <div class="demo-step-title">View trends</div>
+        <p class="demo-step-desc">The Trends tab charts case counts against vaccination rates over time to show rollout impact.</p>
+      </div>
+    </div>
+
+    <!-- MOCKUP -->
+    <div class="mockup-shell">
+      <div class="mockup-bar">
+        <div class="dot dot-r"></div>
+        <div class="dot dot-y"></div>
+        <div class="dot dot-g"></div>
+        <span class="bar-title">COVID Vaccine Tracker — Roopa Srinivas</span>
+      </div>
+      <div>
+        <div class="app-header">
+          <div>
+            <div class="app-title">COVID-19 Vaccine Tracker</div>
+            <div class="app-sub">Live data via CDC API · Updated automatically</div>
+          </div>
+          <div class="app-date">Last updated: Mar 14, 2022 · 08:42 AM</div>
+        </div>
+        <div class="app-tabs">
+          <div class="app-tab active">Map View</div>
+          <div class="app-tab">State Details</div>
+          <div class="app-tab">Vaccine Info</div>
+          <div class="app-tab">Trends</div>
+        </div>
+        <div class="app-body">
+          <div class="map-area">
+            <div class="map-inner">
+              <svg viewBox="0 0 510 260" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;position:absolute;top:0;left:0;">
+                <defs><linearGradient id="leg" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#C84B2F"/><stop offset="50%" stop-color="#4DA6E8"/><stop offset="100%" stop-color="#0F4C8A"/></linearGradient></defs>
+                <!-- Row 1: West -->
+                <rect x="10" y="18" width="36" height="26" rx="2" fill="#1565A3" opacity="0.9"/><text x="28" y="35" font-size="7" fill="#B3D4F5" text-anchor="middle" font-family="sans-serif">WA</text>
+                <rect x="50" y="18" width="36" height="26" rx="2" fill="#1D77BD" opacity="0.9"/><text x="68" y="35" font-size="7" fill="#B3D4F5" text-anchor="middle" font-family="sans-serif">OR</text>
+                <rect x="10" y="48" width="36" height="26" rx="2" fill="#2490D9" opacity="0.9"/><text x="28" y="65" font-size="7" fill="#B3D4F5" text-anchor="middle" font-family="sans-serif">CA</text>
+                <rect x="50" y="48" width="36" height="26" rx="2" fill="#1D77BD" opacity="0.9"/><text x="68" y="65" font-size="7" fill="#B3D4F5" text-anchor="middle" font-family="sans-serif">NV</text>
+                <rect x="10" y="78" width="36" height="26" rx="2" fill="#C84B2F" opacity="0.9"/><text x="28" y="95" font-size="7" fill="#F5C4B3" text-anchor="middle" font-family="sans-serif">AZ</text>
+                <rect x="50" y="78" width="36" height="26" rx="2" fill="#3BA8E8" opacity="0.9"/><text x="68" y="95" font-size="7" fill="#0A3A5C" text-anchor="middle" font-family="sans-serif">UT</text>
+                <!-- Row 1: Mountain -->
+                <rect x="90" y="18" width="36" height="26" rx="2" fill="#3BA8E8" opacity="0.9"/><text x="108" y="35" font-size="7" fill="#0A3A5C" text-anchor="middle" font-family="sans-serif">ID</text>
+                <rect x="130" y="18" width="36" height="26" rx="2" fill="#4DA6E8" opacity="0.9"/><text x="148" y="35" font-size="7" fill="#0A3A5C" text-anchor="middle" font-family="sans-serif">MT</text>
+                <rect x="90" y="48" width="36" height="26" rx="2" fill="#2490D9" opacity="0.9"/><text x="108" y="65" font-size="7" fill="#B3D4F5" text-anchor="middle" font-family="sans-serif">CO</text>
+                <rect x="130" y="48" width="36" height="26" rx="2" fill="#4DA6E8" opacity="0.9"/><text x="148" y="65" font-size="7" fill="#0A3A5C" text-anchor="middle" font-family="sans-serif">WY</text>
+                <rect x="90" y="78" width="36" height="26" rx="2" fill="#E85A30" opacity="0.9"/><text x="108" y="95" font-size="7" fill="#F5C4B3" text-anchor="middle" font-family="sans-serif">NM</text>
+                <rect x="130" y="78" width="36" height="26" rx="2" fill="#C84B2F" opacity="0.9"/><text x="148" y="95" font-size="7" fill="#F5C4B3" text-anchor="middle" font-family="sans-serif">TX</text>
+                <!-- Plains -->
+                <rect x="170" y="18" width="36" height="26" rx="2" fill="#3BA8E8" opacity="0.9"/><text x="188" y="35" font-size="7" fill="#0A3A5C" text-anchor="middle" font-family="sans-serif">ND</text>
+                <rect x="210" y="18" width="36" height="26" rx="2" fill="#2490D9" opacity="0.9"/><text x="228" y="35" font-size="7" fill="#B3D4F5" text-anchor="middle" font-family="sans-serif">MN</text>
+                <rect x="170" y="48" width="36" height="26" rx="2" fill="#3BA8E8" opacity="0.9"/><text x="188" y="65" font-size="7" fill="#0A3A5C" text-anchor="middle" font-family="sans-serif">NE</text>
+                <rect x="210" y="48" width="36" height="26" rx="2" fill="#4DA6E8" opacity="0.9"/><text x="228" y="65" font-size="7" fill="#0A3A5C" text-anchor="middle" font-family="sans-serif">SD</text>
+                <rect x="170" y="78" width="36" height="26" rx="2" fill="#E85A30" opacity="0.9"/><text x="188" y="95" font-size="7" fill="#F5C4B3" text-anchor="middle" font-family="sans-serif">OK</text>
+                <rect x="210" y="78" width="36" height="26" rx="2" fill="#3BA8E8" opacity="0.9"/><text x="228" y="95" font-size="7" fill="#0A3A5C" text-anchor="middle" font-family="sans-serif">KS</text>
+                <!-- Midwest -->
+                <rect x="250" y="18" width="36" height="26" rx="2" fill="#1D77BD" opacity="0.9"/><text x="268" y="35" font-size="7" fill="#B3D4F5" text-anchor="middle" font-family="sans-serif">WI</text>
+                <rect x="290" y="18" width="36" height="26" rx="2" fill="#1565A3" opacity="0.9"/><text x="308" y="35" font-size="7" fill="#B3D4F5" text-anchor="middle" font-family="sans-serif">MI</text>
+                <rect x="250" y="48" width="36" height="26" rx="2" fill="#3BA8E8" opacity="0.9"/><text x="268" y="65" font-size="7" fill="#0A3A5C" text-anchor="middle" font-family="sans-serif">IA</text>
+                <rect x="290" y="48" width="36" height="26" rx="2" fill="#2490D9" opacity="0.9"/><text x="308" y="65" font-size="7" fill="#B3D4F5" text-anchor="middle" font-family="sans-serif">IL</text>
+                <rect x="250" y="78" width="36" height="26" rx="2" fill="#2490D9" opacity="0.9"/><text x="268" y="95" font-size="7" fill="#B3D4F5" text-anchor="middle" font-family="sans-serif">MO</text>
+                <rect x="290" y="78" width="36" height="26" rx="2" fill="#E85A30" opacity="0.9"/><text x="308" y="95" font-size="7" fill="#F5C4B3" text-anchor="middle" font-family="sans-serif">AR</text>
+                <!-- South / East -->
+                <rect x="330" y="18" width="36" height="26" rx="2" fill="#1565A3" opacity="0.9"/><text x="348" y="35" font-size="7" fill="#B3D4F5" text-anchor="middle" font-family="sans-serif">NY</text>
+                <rect x="370" y="18" width="36" height="26" rx="2" fill="#0F4C8A" opacity="0.9"/><text x="388" y="35" font-size="7" fill="#B3D4F5" text-anchor="middle" font-family="sans-serif">ME</text>
+                <rect x="330" y="48" width="36" height="26" rx="2" fill="#1D77BD" opacity="0.9"/><text x="348" y="65" font-size="7" fill="#B3D4F5" text-anchor="middle" font-family="sans-serif">IN</text>
+                <rect x="370" y="48" width="36" height="26" rx="2" fill="#1565A3" opacity="0.9"/><text x="388" y="65" font-size="7" fill="#B3D4F5" text-anchor="middle" font-family="sans-serif">OH</text>
+                <rect x="330" y="78" width="36" height="26" rx="2" fill="#E85A30" opacity="0.9"/><text x="348" y="95" font-size="7" fill="#F5C4B3" text-anchor="middle" font-family="sans-serif">TN</text>
+                <rect x="370" y="78" width="36" height="26" rx="2" fill="#3BA8E8" opacity="0.9"/><text x="388" y="95" font-size="7" fill="#0A3A5C" text-anchor="middle" font-family="sans-serif">KY</text>
+                <!-- Far East -->
+                <rect x="410" y="18" width="36" height="26" rx="2" fill="#1565A3" opacity="0.9"/><text x="428" y="35" font-size="7" fill="#B3D4F5" text-anchor="middle" font-family="sans-serif">MA</text>
+                <rect x="450" y="18" width="36" height="26" rx="2" fill="#1565A3" opacity="0.9"/><text x="468" y="35" font-size="7" fill="#B3D4F5" text-anchor="middle" font-family="sans-serif">CT</text>
+                <rect x="410" y="48" width="36" height="26" rx="2" fill="#2490D9" opacity="0.9"/><text x="428" y="65" font-size="7" fill="#B3D4F5" text-anchor="middle" font-family="sans-serif">WV</text>
+                <rect x="450" y="48" width="36" height="26" rx="2" fill="#1D77BD" opacity="0.9"/><text x="468" y="65" font-size="7" fill="#B3D4F5" text-anchor="middle" font-family="sans-serif">VA</text>
+                <!-- Highlighted: PA -->
+                <rect x="410" y="78" width="36" height="26" rx="2" fill="#1D77BD" opacity="0.9"/><text x="428" y="95" font-size="7" fill="#B3D4F5" text-anchor="middle" font-family="sans-serif">PA</text>
+                <rect x="410" y="78" width="36" height="26" rx="2" fill="none" stroke="#FEBC2E" stroke-width="2"/>
+                <rect x="450" y="78" width="36" height="26" rx="2" fill="#1565A3" opacity="0.9"/><text x="468" y="95" font-size="7" fill="#B3D4F5" text-anchor="middle" font-family="sans-serif">NJ</text>
+                <!-- Row: Deep South -->
+                <rect x="250" y="108" width="36" height="26" rx="2" fill="#C84B2F" opacity="0.9"/><text x="268" y="125" font-size="7" fill="#F5C4B3" text-anchor="middle" font-family="sans-serif">AL</text>
+                <rect x="290" y="108" width="36" height="26" rx="2" fill="#E85A30" opacity="0.9"/><text x="308" y="125" font-size="7" fill="#F5C4B3" text-anchor="middle" font-family="sans-serif">GA</text>
+                <rect x="210" y="108" width="36" height="26" rx="2" fill="#E85A30" opacity="0.9"/><text x="228" y="125" font-size="7" fill="#F5C4B3" text-anchor="middle" font-family="sans-serif">MS</text>
+                <rect x="170" y="108" width="36" height="26" rx="2" fill="#E85A30" opacity="0.9"/><text x="188" y="125" font-size="7" fill="#F5C4B3" text-anchor="middle" font-family="sans-serif">LA</text>
+                <rect x="330" y="108" width="36" height="26" rx="2" fill="#2490D9" opacity="0.9"/><text x="348" y="125" font-size="7" fill="#B3D4F5" text-anchor="middle" font-family="sans-serif">SC</text>
+                <rect x="370" y="108" width="36" height="26" rx="2" fill="#3BA8E8" opacity="0.9"/><text x="388" y="125" font-size="7" fill="#0A3A5C" text-anchor="middle" font-family="sans-serif">NC</text>
+                <rect x="410" y="108" width="36" height="26" rx="2" fill="#1D77BD" opacity="0.9"/><text x="428" y="125" font-size="7" fill="#B3D4F5" text-anchor="middle" font-family="sans-serif">MD</text>
+                <rect x="450" y="108" width="36" height="26" rx="2" fill="#1565A3" opacity="0.9"/><text x="468" y="125" font-size="7" fill="#B3D4F5" text-anchor="middle" font-family="sans-serif">DE</text>
+                <!-- FL -->
+                <rect x="330" y="138" width="36" height="26" rx="2" fill="#E85A30" opacity="0.9"/><text x="348" y="155" font-size="7" fill="#F5C4B3" text-anchor="middle" font-family="sans-serif">FL</text>
+                <!-- Legend -->
+                <rect x="10" y="175" width="90" height="9" rx="2" fill="url(#leg)" opacity="0.8"/>
+                <text x="10" y="193" font-size="6" fill="#7FB3D9" font-family="sans-serif">Lower vax rate</text>
+                <text x="78" y="193" font-size="6" fill="#7FB3D9" font-family="sans-serif" text-anchor="end">Higher</text>
+                <!-- Tooltip -->
+                <rect x="300" y="138" width="112" height="56" rx="3" fill="#0F2030" stroke="#4DA6E8" stroke-width="0.75" opacity="0.97"/>
+                <text x="311" y="153" font-size="7.5" fill="#E8F4FF" font-family="sans-serif" font-weight="bold">Pennsylvania</text>
+                <text x="311" y="165" font-size="6.5" fill="#7FB3D9" font-family="sans-serif">Vaccinated: 71.4%</text>
+                <text x="311" y="175" font-size="6.5" fill="#7FB3D9" font-family="sans-serif">Cases (7-day avg): 4,820</text>
+                <text x="311" y="185" font-size="6.5" fill="#4ADE80" font-family="sans-serif">Doses today: +124,500</text>
+              </svg>
+            </div>
+          </div>
+          <!-- Sidebar -->
+          <div class="sidebar">
+            <div>
+              <div class="sb-title">National Summary</div>
+              <div style="display:flex;flex-direction:column;gap:5px;">
+                <div class="sb-row"><span class="sb-key">Total doses</span><span class="sb-val">554.8M</span></div>
+                <div class="sb-row"><span class="sb-key">Fully vaccinated</span><span class="sb-val g">65.8%</span></div>
+                <div class="sb-row"><span class="sb-key">Active cases</span><span class="sb-val r">1.2M</span></div>
+                <div class="sb-row"><span class="sb-key">7-day avg</span><span class="sb-val r">49,230</span></div>
+              </div>
+            </div>
+            <div class="sb-divider"></div>
+            <div>
+              <div class="sb-title">Vaccination Rate</div>
+              <div style="margin-bottom:6px;">
+                <div style="display:flex;justify-content:space-between;"><span style="font-size:0.65rem;color:#7FB3D9;font-family:sans-serif;">1st dose</span><span style="font-size:0.65rem;color:#7FB3D9;font-family:sans-serif;">78.2%</span></div>
+                <div class="bar-track"><div class="bar-fill" style="width:78%;background:#4DA6E8;"></div></div>
+              </div>
+              <div style="margin-bottom:6px;">
+                <div style="display:flex;justify-content:space-between;"><span style="font-size:0.65rem;color:#7FB3D9;font-family:sans-serif;">Fully vaxxed</span><span style="font-size:0.65rem;color:#7FB3D9;font-family:sans-serif;">65.8%</span></div>
+                <div class="bar-track"><div class="bar-fill" style="width:66%;background:#4ADE80;"></div></div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;"><span style="font-size:0.65rem;color:#7FB3D9;font-family:sans-serif;">Boosted</span><span style="font-size:0.65rem;color:#7FB3D9;font-family:sans-serif;">44.1%</span></div>
+                <div class="bar-track"><div class="bar-fill" style="width:44%;background:#FEBC2E;"></div></div>
+              </div>
+            </div>
+            <div class="sb-divider"></div>
+            <div>
+              <div class="sb-title">By Brand</div>
+              <div class="brand-row"><span class="brand-n">Pfizer-BioNTech</span><span class="brand-p">54.2%</span></div>
+              <div class="brand-row"><span class="brand-n">Moderna</span><span class="brand-p">37.1%</span></div>
+              <div class="brand-row"><span class="brand-n">J&amp;J / Janssen</span><span class="brand-p">8.7%</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="mockup-caption">Mockup of the Java Swing dashboard — data reflects real CDC figures from March 2022.</p>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="container">
+    <p class="section-eyebrow">Open source</p>
+    <h2 class="section-heading">Want to explore<br>or <em>build on it?</em></h2>
+    <p>The full project is available on GitHub. Browse the source, fork it, or reach out to collaborate.</p>
+    <div class="hero-btns" style="justify-content:center;">
+      <a class="btn-primary" href="https://github.com/roopa-srinivas/COVIDVaccineTracker" target="_blank">View on GitHub →</a>
+      <a class="btn-ghost" href="mailto:roopasrinivas@berkeley.edu">Get in Touch</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <a href="https://roopa-srinivas.github.io/">Roopa Srinivas</a> &nbsp;·&nbsp; UC Berkeley EECS '27 &nbsp;·&nbsp; roopasrinivas@berkeley.edu
+</footer>
+
+</body>
+</html>
