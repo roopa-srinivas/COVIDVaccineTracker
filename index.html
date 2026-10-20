@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>COVID Vaccine Tracker - Roopa Srinivas</title>
+<meta name="description" content="An interactive map of COVID-19 vaccinations, cases and deaths by US state, 2020–2023. An AP Computer Science capstone from 2021, rebuilt for the web."/>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -49,9 +50,6 @@ section { padding: 7rem 0; }
 .hero-desc { font-size: 1.125rem; color: var(--ink2); max-width: 520px; margin-bottom: 1.5rem; font-weight: 300; line-height: 1.75; }
 .hero-links { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
 
-.archived-banner { display: flex; align-items: flex-start; gap: 0.75rem; background: var(--accent-light); border: 1px solid rgba(185,28,28,0.2); border-left: 3px solid var(--accent); border-radius: 4px; padding: 0.9rem 1.1rem; margin-bottom: 2rem; max-width: 580px; }
-.archived-banner p { font-size: 0.875rem; color: var(--ink2); font-weight: 300; line-height: 1.6; }
-.archived-banner strong { color: var(--accent); font-weight: 500; }
 
 .btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.7rem 1.6rem; border-radius: 100px; font-size: 0.875rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; text-decoration: none; transition: all 0.2s; cursor: pointer; }
 .btn-primary { background: var(--accent); color: #fff; border: 1.5px solid var(--accent); }
@@ -152,6 +150,27 @@ footer a:hover { color: #FCA5A5; }
   /* Too many section links for a phone; the back button and title stay. */
   .nav-links { display: none; }
 }
+/* Rebuild additions: dashboard preview, then-and-now, team. */
+.hero-shot { display: block; margin-top: 3rem; border-radius: 14px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 30px 60px -24px rgba(90,20,10,0.35); transition: transform 0.25s; }
+.hero-shot:hover { transform: translateY(-3px); }
+.hero-shot img { display: block; width: 100%; height: auto; }
+.section-sub { color: var(--ink2); max-width: 620px; margin: -1.5rem 0 2rem; }
+code { font-size: 0.85em; background: var(--surface2); padding: 0.05rem 0.35rem; border-radius: 4px; }
+#story { background: var(--surface); }
+.then-now { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+.era { border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; background: var(--bg); }
+.era.now { border-color: rgba(185,28,28,0.35); background: var(--accent-light); }
+.era-label { font-size: 0.75rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem; }
+.era ul { padding-left: 1.1rem; display: grid; gap: 0.45rem; font-size: 0.93rem; color: var(--ink2); }
+.era strong { color: var(--ink); font-weight: 500; }
+.tech-era { font-size: 0.8rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink3); margin: 1.5rem 0 0.75rem; }
+.tech-era:first-of-type { margin-top: 0; }
+#team { background: var(--surface); }
+.team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+.team-card { border: 1px solid var(--border); border-radius: 12px; padding: 1.4rem; background: var(--bg); }
+.team-card h3 { font-family: var(--serif); font-weight: 400; font-size: 1.25rem; margin-bottom: 0.4rem; }
+.team-card p { font-size: 0.9rem; color: var(--ink2); }
+@media (max-width: 700px) { .then-now { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -162,44 +181,74 @@ footer a:hover { color: #FCA5A5; }
     <a class="nav-logo" href="#">COVID Vaccine Tracker</a>
   </div>
   <ul class="nav-links">
+    <li><a href="#story">Then &amp; Now</a></li>
     <li><a href="#features">Features</a></li>
-    <li><a href="#how">How It Works</a></li>
-    <li><a href="#demo">Demo</a></li>
-    <li><a href="#tech">Tech Stack</a></li>
+    <li><a href="#team">Team</a></li>
+    <li><a href="dashboard/">Dashboard</a></li>
   </ul>
 </nav>
 
 <section id="hero">
   <div class="container">
-    <p class="hero-eyebrow">Data Visualization · High School Capstone · 2022</p>
-    <h1 class="hero-name">Tracking the <em>COVID vaccine</em><br>rollout, live.</h1>
-    <div class="archived-banner">
-      <p>📦 <strong>Archived project.</strong> Data was sourced from CDC API endpoints in 2021–2022. Those endpoints have since been restructured or retired, so the live data feed no longer functions — but the interface and logic remain as originally built.</p>
-    </div>
-    <p class="hero-desc">An interactive map dashboard pulling real-time CDC data on COVID cases, vaccines administered, and brand-specific statistics — making pandemic data accessible and understandable at a glance.</p>
+    <p class="hero-eyebrow">Data Visualization · AP Computer Science Capstone, 2021 · Rebuilt for the web, 2026</p>
+    <h1 class="hero-name">Tracking the <em>COVID vaccine</em><br>rollout, state by state.</h1>
+    <p class="hero-desc">An interactive map of COVID-19 vaccinations, cases and deaths across all 50 states and DC. It started as a three-person Java desktop app for our high school AP Computer Science capstone. I've since rebuilt it as a web dashboard covering the full archive, from March 2020 to March 2023.</p>
     <div class="hero-links">
-      <a class="btn btn-primary" href="https://github.com/roopa-srinivas/COVIDVaccineTracker" target="_blank">View on GitHub →</a>
-      <a class="btn btn-outline" href="https://roopa-srinivas.github.io/#projects">← Back to Projects</a>
+      <a class="btn btn-primary" href="dashboard/">Open the dashboard →</a>
+      <a class="btn btn-outline" href="https://github.com/roopa-srinivas/COVIDVaccineTracker" target="_blank" rel="noopener">View on GitHub</a>
     </div>
+    <a class="hero-shot" href="dashboard/" aria-label="Open the dashboard">
+      <img src="dashboard-preview.jpg" width="1504" height="812" alt="The dashboard: a US map colored by percent fully vaccinated in December 2021, a timeline slider, and US totals such as 59.8% fully vaccinated and 469 million doses given."/>
+    </a>
   </div>
 </section>
 
 <div class="stats-strip">
-  <div class="stat"><div class="stat-num">50+</div><div class="stat-label">States & territories tracked</div></div>
-  <div class="stat"><div class="stat-num">3</div><div class="stat-label">Vaccine brands profiled</div></div>
-  <div class="stat"><div class="stat-num">Live</div><div class="stat-label">CDC data integration</div></div>
-  <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Java — no frameworks</div></div>
+  <div class="stat"><div class="stat-num">51</div><div class="stat-label">States + DC on the map</div></div>
+  <div class="stat"><div class="stat-num">159</div><div class="stat-label">Weeks of data, 2020–2023</div></div>
+  <div class="stat"><div class="stat-num">3</div><div class="stat-label">Teammates on the original</div></div>
+  <div class="stat"><div class="stat-num">2,800</div><div class="stat-label">Lines of original Java</div></div>
 </div>
+
+<section id="story">
+  <div class="container">
+    <p class="section-label">Then and now</p>
+    <h2 class="section-title">A 2021 wishlist, <em>finally built.</em></h2>
+    <p class="section-sub">Our 2021 design doc listed features we wanted but didn't have time for. The web version is built around them.</p>
+    <div class="then-now">
+      <div class="era">
+        <p class="era-label">2021 · Java + Processing desktop app</p>
+        <ul>
+          <li>Downloaded the latest CSVs on launch and redrew the charts</li>
+          <li>A map of state outlines with a dropdown to pick a state</li>
+          <li>Stat buttons per state: doses, percent vaccinated, cases up or down</li>
+          <li>Per-state line charts, including a hand-tuned case prediction</li>
+          <li>A "More information" page summarizing the CDC</li>
+        </ul>
+      </div>
+      <div class="era now">
+        <p class="era-label">2026 · Web dashboard</p>
+        <ul>
+          <li><strong>"Color each state by percent vaccinated":</strong> a choropleth for five measures</li>
+          <li><strong>"View statistics from previous weeks and months":</strong> a timeline you can scrub or play</li>
+          <li><strong>"Hover over a state":</strong> tooltips, click to explore, keyboard and table access</li>
+          <li><strong>"Publish it into a website":</strong> runs in any browser, no install</li>
+          <li><strong>New:</strong> a trend forecast checked against what actually happened, and doses by maker</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
 
 <section id="features">
   <div class="container">
     <p class="section-label">What it does</p>
     <h2 class="section-title">Built to make <em>public health data</em><br>actually public.</h2>
     <div class="features-grid">
-      <div class="feature-card"><div class="feature-icon">🗺️</div><div class="feature-title">Interactive Map Dashboard</div><p class="feature-desc">A visual, state-by-state map showing COVID case counts and vaccination progress across the US — click any state to drill into that state's detailed statistics and trend charts.</p></div>
-      <div class="feature-card"><div class="feature-icon">💉</div><div class="feature-title">Live Vaccine Statistics</div><p class="feature-desc">Real-time data on total doses administered, percentage of population vaccinated, distribution percentages, and breakdown by dose number — pulled directly from the CDC's public API.</p></div>
-      <div class="feature-card"><div class="feature-icon">🏭</div><div class="feature-title">Brand-Specific Profiles</div><p class="feature-desc">Detailed fact cards for Pfizer-BioNTech, Moderna, and J&J — covering efficacy rates, eligibility, side effects, and dosing schedules sourced from the CDC.</p></div>
-      <div class="feature-card"><div class="feature-icon">📊</div><div class="feature-title">Case Trend Charts</div><p class="feature-desc">Per-state line charts tracking COVID cases, deaths, fully vaccinated population, and predicted case trajectories over time — with hover tooltips showing exact figures by date.</p></div>
+      <div class="feature-card"><div class="feature-icon">🗺️</div><div class="feature-title">Map with a timeline</div><p class="feature-desc">Color the US by percent fully vaccinated, at least one dose, boosters, new cases or deaths per 100,000 people, then scrub or play through 159 weeks to watch the rollout and each wave.</p></div>
+      <div class="feature-card"><div class="feature-icon">📍</div><div class="feature-title">Every state up close</div><p class="feature-desc">Pick a state to see its numbers for that week, whether cases went up or down since the week before (the original app's headline stat), and charts comparing it with the whole US.</p></div>
+      <div class="feature-card"><div class="feature-icon">📈</div><div class="feature-title">A forecast you can check</div><p class="feature-desc">From any week, a simple 3-week trend projects cases two weeks ahead and shows what really happened, plus how far off that trend is across the whole pandemic. It famously misses Omicron.</p></div>
+      <div class="feature-card"><div class="feature-icon">💉</div><div class="feature-title">Vaccines then and now</div><p class="feature-desc">US doses by maker through March 2023, alongside what the original app told people in May 2021, kept as a snapshot of what was known at the time.</p></div>
     </div>
   </div>
 </section>
@@ -207,12 +256,12 @@ footer a:hover { color: #FCA5A5; }
 <section id="how">
   <div class="container">
     <p class="section-label">How it works</p>
-    <h2 class="section-title">From raw API data to <em>insight</em><br>in four steps.</h2>
+    <h2 class="section-title">From public datasets to <em>insight.</em></h2>
     <div class="steps">
-      <div class="step"><div class="step-num">01</div><div class="step-title">Fetch from CDC API</div><p class="step-desc">On launch, the app makes HTTP requests to CDC public endpoints to pull the latest vaccination and case records for every US state and territory.</p></div>
-      <div class="step"><div class="step-num">02</div><div class="step-title">Parse & structure the data</div><p class="step-desc">The JSON response is mapped into structured Java objects — one per state — containing case totals, dose counts, and brand-level distribution figures.</p></div>
-      <div class="step"><div class="step-num">03</div><div class="step-title">Render the map</div><p class="step-desc">The national map renders with click-through state navigation. A hamburger menu lets users jump directly to any state from a scrollable list.</p></div>
-      <div class="step"><div class="step-num">04</div><div class="step-title">Explore & compare</div><p class="step-desc">Click stat buttons to reveal figures, view trend charts with multi-line overlays, and browse brand-specific vaccine fact sheets — all in one app.</p></div>
+      <div class="step"><div class="step-num">01</div><div class="step-title">Same sources as 2021</div><p class="step-desc">Cases and deaths from The New York Times, vaccinations from Our World in Data (compiled from the CDC). Both stopped updating in 2023.</p></div>
+      <div class="step"><div class="step-num">02</div><div class="step-title">A Python data build</div><p class="step-desc"><code>scripts/build_data.py</code> turns 15 MB of daily CSVs into a 395 KB weekly snapshot, filling gaps in states' reports and marking those weeks as estimated.</p></div>
+      <div class="step"><div class="step-num">03</div><div class="step-title">D3 in the browser</div><p class="step-desc">D3 and TopoJSON draw the map and charts as SVG, with fixed color scales so a color means the same thing every week.</p></div>
+      <div class="step"><div class="step-num">04</div><div class="step-title">Honest by default</div><p class="step-desc">Estimated weeks are labeled, DC's over-100% figures are explained, and every map has a table view.</p></div>
     </div>
   </div>
 </section>
@@ -221,44 +270,49 @@ footer a:hover { color: #FCA5A5; }
   <div class="container">
     <p class="section-label">Tech Stack</p>
     <h2 class="section-title">Built with <em>purpose-fit</em> tools.</h2>
+    <p class="tech-era">Web dashboard (2026)</p>
+    <div class="tech-grid">
+      <div class="tech-pill">📊 D3.js</div>
+      <div class="tech-pill">🗺️ TopoJSON + us-atlas</div>
+      <div class="tech-pill">⚡ JavaScript</div>
+      <div class="tech-pill">🐍 Python data pipeline</div>
+      <div class="tech-pill">🚀 GitHub Pages</div>
+    </div>
+    <p class="tech-era">Original app (2021)</p>
     <div class="tech-grid">
       <div class="tech-pill">☕ Java</div>
-      <div class="tech-pill">🏛️ Java Swing / AWT</div>
-      <div class="tech-pill">🌐 Java HTTP Client</div>
-      <div class="tech-pill">📋 JSON Parsing</div>
-      <div class="tech-pill">📊 CDC Data API</div>
-      <div class="tech-pill">🚀 GitHub</div>
+      <div class="tech-pill">🎨 Processing</div>
+      <div class="tech-pill">🌐 java.net.URL CSV downloads</div>
+      <div class="tech-pill">⏱️ TimerTask auto-refresh</div>
     </div>
   </div>
 </section>
 
-<section id="demo">
-  <div class="container demo-inner">
-    <p class="section-label">Demo</p>
-    <h2 class="section-title">Every screen, <em>as it ran.</em></h2>
-    <p class="section-sub">The app ran as a native Java desktop application. These screenshots show the original interface — from the home screen to state-level trend charts.</p>
-    <a class="demo-link" href="https://github.com/roopa-srinivas/COVIDVaccineTracker" target="_blank">View on GitHub →</a>
-    <div class="demo-steps">
-      <div class="demo-step"><div class="demo-step-num">1</div><h4>Launch the app</h4><p>The home screen offers three paths: instructions, the map dashboard, or the vaccine info pages.</p></div>
-      <div class="demo-step"><div class="demo-step-num">2</div><h4>Open the US map</h4><p>The map view shows the full USA with national-level stat buttons and a hamburger menu to pick any state.</p></div>
-      <div class="demo-step"><div class="demo-step-num">3</div><h4>Drill into a state</h4><p>Select a state to see its outline, clickable stat buttons, and a live multi-line trend chart on the right.</p></div>
-      <div class="demo-step"><div class="demo-step-num">4</div><h4>Read vaccine facts</h4><p>The More Information page breaks down eligibility, side effects, effectiveness, and brand profiles from the CDC.</p></div>
+<section id="team">
+  <div class="container">
+    <p class="section-label">Team</p>
+    <h2 class="section-title">Who built <em>what.</em></h2>
+    <div class="team-grid">
+      <div class="team-card"><h3>Roopa Srinivas</h3><p>2021: the map and state pages (Country, State, MoreInfo classes), the state dropdown, the app frame and map images.<br>2026: the web dashboard and data pipeline.</p></div>
+      <div class="team-card"><h3>Sophie Lin</h3><p>2021: page transitions and buttons, the instructions page, graphics and layout, the presentation video.</p></div>
+      <div class="team-card"><h3>Nodoka Shibasaki</h3><p>2021: data download and parsing, the statistics and graphs, the case prediction, hovering, auto-updates.</p></div>
     </div>
   </div>
 </section>
 
 <section id="gallery">
   <div class="container">
-    <p class="section-label">Screenshots</p>
-    <h2 class="section-title">The interface, <em>in full.</em></h2>
+    <p class="section-label">The original</p>
+    <h2 class="section-title">The 2021 app, <em>as it ran.</em></h2>
+    <p class="section-sub">The original ran as a Java desktop app built with Processing. Its code is still in the repo, unchanged, in <code>CapstoneCOVIDVaccineTrackerProject</code>.</p>
     <div class="screenshot-grid">
-      <div class="screenshot-card"><img src="covid1.png" alt="Home screen" loading="lazy"/><div class="screenshot-caption">Home screen — three entry points: instructions, national map, and vaccine info.</div></div>
-      <div class="screenshot-card"><img src="covid2.png" alt="Instructions screen" loading="lazy"/><div class="screenshot-caption">Instructions screen — explains navigation, the state dropdown, and button interactions.</div></div>
-      <div class="screenshot-card"><img src="covid3.png" alt="More Information page" loading="lazy"/><div class="screenshot-caption">More Information page — CDC data on eligibility, side effects, effectiveness, and brand fact cards.</div></div>
-      <div class="screenshot-card"><img src="covid4.png" alt="USA map view" loading="lazy"/><div class="screenshot-caption">USA map — national outline with four clickable stat buttons; hamburger menu opens the state picker.</div></div>
-      <div class="screenshot-card"><img src="covid5.png" alt="State picker dropdown" loading="lazy"/><div class="screenshot-caption">State picker — alphabetical dropdown dialog to navigate to any US state's detail view.</div></div>
-      <div class="screenshot-card"><img src="covid6.png" alt="California state view" loading="lazy"/><div class="screenshot-caption">State view (California) — state outline, seven clickable stat buttons, and a multi-line trend chart.</div></div>
-      <div class="screenshot-card"><img src="covid7.png" alt="California stats revealed" loading="lazy"/><div class="screenshot-caption">Stats revealed — buttons display actual values (e.g. 36.15% fully vaccinated) with chart tooltips by date.</div></div>
+      <div class="screenshot-card"><img src="covid1.png" alt="Home screen" loading="lazy"/><div class="screenshot-caption">Home screen: instructions, the national map, or vaccine info.</div></div>
+      <div class="screenshot-card"><img src="covid2.png" alt="Instructions screen" loading="lazy"/><div class="screenshot-caption">Instructions: navigation, the state dropdown, and buttons.</div></div>
+      <div class="screenshot-card"><img src="covid3.png" alt="More Information page" loading="lazy"/><div class="screenshot-caption">More Information: eligibility, side effects and effectiveness, from the CDC in May 2021.</div></div>
+      <div class="screenshot-card"><img src="covid4.png" alt="USA map view" loading="lazy"/><div class="screenshot-caption">USA map with national stat buttons and the state picker menu.</div></div>
+      <div class="screenshot-card"><img src="covid5.png" alt="State picker dropdown" loading="lazy"/><div class="screenshot-caption">State picker: an alphabetical list of every state.</div></div>
+      <div class="screenshot-card"><img src="covid6.png" alt="California state view" loading="lazy"/><div class="screenshot-caption">California: stat buttons and a multi-line trend chart.</div></div>
+      <div class="screenshot-card"><img src="covid7.png" alt="California stats revealed" loading="lazy"/><div class="screenshot-caption">Stats revealed, e.g. 36.15% fully vaccinated, with chart tooltips.</div></div>
     </div>
   </div>
 </section>
@@ -267,16 +321,16 @@ footer a:hover { color: #FCA5A5; }
   <div class="container">
     <p class="section-label">Open Source</p>
     <h2 class="section-title">Want to explore or <em>build on it?</em></h2>
-    <p>The full project is available on GitHub. Browse the source, fork it, or reach out to collaborate.</p>
+    <p>Both versions are on GitHub: the original Java app and the web dashboard with its data pipeline.</p>
     <div class="cta-buttons">
-      <a class="btn btn-primary" href="https://github.com/roopa-srinivas/COVIDVaccineTracker" target="_blank">View on GitHub →</a>
-      <a class="btn btn-outline" href="mailto:roopasrinivas@berkeley.edu">Get in Touch</a>
+      <a class="btn btn-primary" href="dashboard/">Open the dashboard →</a>
+      <a class="btn btn-outline" href="https://github.com/roopa-srinivas/COVIDVaccineTracker" target="_blank" rel="noopener">View on GitHub</a>
     </div>
   </div>
 </section>
 
 <footer>
-  <a href="https://roopa-srinivas.github.io/">Roopa Srinivas</a> &nbsp;·&nbsp; UC Berkeley EECS '27 &nbsp;·&nbsp; <a href="mailto:roopasrinivas@berkeley.edu">roopasrinivas@berkeley.edu</a>
+  <a href="https://roopa-srinivas.github.io/">Roopa Srinivas</a> &nbsp;·&nbsp; <a href="mailto:roopasrinivas@berkeley.edu">roopasrinivas@berkeley.edu</a>
 </footer>
 </body>
 </html>
