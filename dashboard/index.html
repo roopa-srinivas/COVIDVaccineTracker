@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>COVID Vaccine Tracker - Dashboard</title>
+<meta name="description" content="Explore COVID-19 vaccinations, cases and deaths by US state, week by week from 2020 to 2023. Rebuilt for the web from a 2021 AP Computer Science capstone."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+<header class="top">
+  <div class="top-inner">
+    <a class="back" href="../">← Project page</a>
+    <div class="title-block">
+      <h1>COVID Vaccine Tracker</h1>
+      <p class="sub">Rebuilt for the web in 2026 from our 2021 AP Computer Science capstone · data from March 2020 to March 2023</p>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- Filters: one row, above everything they scope. -->
+  <section class="filters" aria-label="Filters">
+    <div class="filter">
+      <label for="metric">Map shows</label>
+      <select id="metric"></select>
+    </div>
+    <div class="filter grow">
+      <label for="week">Week of <output id="week-label" for="week"></output></label>
+      <div class="timeline">
+        <button id="play" class="play" type="button" aria-label="Play the timeline">▶</button>
+        <input id="week" type="range" min="0" value="0" step="1"/>
+      </div>
+    </div>
+    <div class="filter">
+      <label for="region">Place</label>
+      <select id="region"></select>
+    </div>
+  </section>
+
+  <div class="grid">
+    <section class="card map-card" aria-labelledby="map-title">
+      <div class="card-head">
+        <h2 id="map-title"></h2>
+        <button id="table-toggle" class="link-btn" type="button" aria-expanded="false" aria-controls="table-wrap">Show as table</button>
+      </div>
+      <div class="map-wrap">
+        <svg id="map" viewBox="-10 0 985 610" role="img" aria-labelledby="map-title"></svg>
+      </div>
+      <div id="legend" class="legend" aria-hidden="true"></div>
+      <p class="hint">Hover a state for its numbers, click to explore it. Press ▶ to watch the rollout.</p>
+      <div id="table-wrap" class="table-wrap" hidden>
+        <table id="table">
+          <thead><tr><th scope="col"><button data-sort="name">State</button></th><th scope="col"><button data-sort="value">Value</button></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card detail" aria-labelledby="detail-name" aria-live="polite">
+      <p class="eyebrow" id="detail-when"></p>
+      <h2 id="detail-name"></h2>
+      <div class="tiles" id="tiles"></div>
+      <p class="note" id="detail-note"></p>
+    </section>
+  </div>
+
+  <div class="charts">
+    <section class="card" aria-labelledby="cases-title">
+      <div class="card-head">
+        <div>
+          <h2 id="cases-title">New cases per 100,000 people per day</h2>
+          <p class="card-sub">7-day average, with a 2-week trend forecast from the selected week</p>
+        </div>
+        <div class="key" id="cases-key"></div>
+      </div>
+      <div class="chart" id="cases-chart"></div>
+      <p class="forecast" id="forecast-text"></p>
+    </section>
+    <section class="card" aria-labelledby="vax-title">
+      <div class="card-head">
+        <div>
+          <h2 id="vax-title">Share of people fully vaccinated</h2>
+          <p class="card-sub">Percent of the population</p>
+        </div>
+        <div class="key" id="vax-key"></div>
+      </div>
+      <div class="chart" id="vax-chart"></div>
+    </section>
+  </div>
+
+  <div class="lower">
+    <section class="card" aria-labelledby="makers-title">
+      <h2 id="makers-title">US doses by vaccine maker</h2>
+      <p class="card-sub" id="makers-sub"></p>
+      <div id="makers"></div>
+    </section>
+
+    <section class="card facts" aria-labelledby="facts-title">
+      <h2 id="facts-title">What the original app told people in May 2021</h2>
+      <p class="card-sub">Carried over from the 2021 "More information" page, which summarized the CDC at the time. Kept as a snapshot of what was known then, not current medical advice.</p>
+      <div class="facts-grid">
+        <div>
+          <h3>The vaccines</h3>
+          <ul>
+            <li>Pfizer-BioNTech: 2 shots for full effectiveness</li>
+            <li>Moderna: 2 shots for full effectiveness</li>
+            <li>Johnson &amp; Johnson: 1 shot for full effectiveness</li>
+            <li>Eligibility: 12 and older, Pfizer-BioNTech only</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Known then</h3>
+          <ul>
+            <li>Effective in preventing death and severe illness</li>
+            <li>Fully protected 2 weeks after the final shot</li>
+            <li>No vaccine is 100% effective</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Not known yet</h3>
+          <ul>
+            <li>How effective they are against variants</li>
+            <li>How effective they are for people with weakened immune systems</li>
+            <li>How long protection lasts</li>
+          </ul>
+        </div>
+      </div>
+      <p class="card-sub">The data above answers the first question: the Omicron wave of winter 2021–22 brought the highest case counts of the pandemic, even after most people were vaccinated.</p>
+    </section>
+  </div>
+
+  <footer class="sources">
+    <p><strong>Data.</strong> Cases and deaths: <a href="https://github.com/nytimes/covid-19-data">The New York Times</a> (final update March 2023). Vaccinations: <a href="https://github.com/owid/covid-19-data">Our World in Data</a>, compiled from the CDC. These are the same sources the 2021 app downloaded on launch; both have since stopped updating, so this version uses a weekly snapshot built by <code>scripts/build_data.py</code>.</p>
+    <p><strong>Notes.</strong> Weeks marked "estimated" fill a state's reporting gap with a straight line between its reports before and after. DC's percentages pass 100% because it counts people vaccinated there who live elsewhere. The forecast is a simple trend line on the last three weeks, shown to compare with what happened, not a public-health model.</p>
+    <p><strong>Credits.</strong> Original Java/Processing app (2021) by Roopa Srinivas, Sophie Lin and Nodoka Shibasaki for AP Computer Science. Web version by Roopa Srinivas.</p>
+  </footer>
+</main>
+
+<div id="tooltip" class="tooltip" role="tooltip" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
