@@ -3,24 +3,63 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="theme-color" content="#0A1716" media="(prefers-color-scheme: dark)"/>
+<meta name="theme-color" content="#F4FAF9" media="(prefers-color-scheme: light)"/>
 <title>COVID Vaccine Tracker - Roopa Srinivas</title>
 <meta name="description" content="An interactive map of COVID-19 vaccinations, cases and deaths by US state, 2020–2023. An AP Computer Science capstone from 2021, rebuilt for the web."/>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* Public-health teal. Dark by default; light for devices set to light mode. */
 :root {
-  --bg: #FDF8F0;
-  --surface: #FFFFFF;
-  --surface2: #F5EDE0;
-  --ink: #1A0A00;
-  --ink2: #5C4033;
-  --ink3: #9A7060;
-  --accent: #B91C1C;
-  --accent-dark: #7F1212;
-  --accent-light: #FAE7E7;
-  --border: rgba(90,20,10,0.12);
+  color-scheme: dark;
+  --bg: #0A1716;
+  --surface: #10211F;
+  --surface2: #152A27;
+  --ink: #E6F4F2;
+  --ink2: #A9C6C2;
+  --ink3: #7E9C98;
+  --accent: #2EC4B6;
+  --accent-hover: #5FD8CB;
+  --on-accent: #032420;
+  --accent-soft: rgba(46,196,182,0.16);
+  --accent-line: rgba(46,196,182,0.45);
+  --second: #F4A261;
+  --border: rgba(230,244,242,0.12);
+  --nav-bg: rgba(10,23,22,0.92);
+  --band: #0F3F3A;
+  --deep: #061110;
+  --on-deep: #E6F4F2;
+  --on-deep2: rgba(230,244,242,0.62);
+  --on-deep3: rgba(230,244,242,0.4);
+  --deep-em: #5EEAD4;
+  --deep-glow: rgba(255,255,255,0.05);
+  --deep-line: rgba(255,255,255,0.1);
+  --shadow: rgba(0,0,0,0.5);
   --serif: 'DM Serif Display', Georgia, serif;
   --sans: 'DM Sans', system-ui, sans-serif;
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    color-scheme: light;
+    --bg: #F4FAF9;
+    --surface: #FFFFFF;
+    --surface2: #E8F3F1;
+    --ink: #0B2522;
+    --ink2: #3D5C58;
+    --ink3: #587470;
+    --accent: #0F766E;
+    --accent-hover: #115E59;
+    --on-accent: #FFFFFF;
+    --accent-soft: #D7EEEB;
+    --accent-line: rgba(15,118,110,0.35);
+    --second: #C2410C;
+    --border: rgba(11,37,34,0.12);
+    --nav-bg: rgba(244,250,249,0.93);
+    --band: #0F766E;
+    --deep: #0B2522;
+    --shadow: rgba(11,37,34,0.28);
+  }
 }
 html { scroll-behavior: smooth; }
 body { font-family: var(--sans); background: var(--bg); color: var(--ink); font-size: 16px; line-height: 1.7; }
@@ -29,7 +68,7 @@ nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
   display: flex; align-items: center; justify-content: space-between;
   padding: 1.25rem 3rem;
-  background: rgba(253,248,240,0.93);
+  background: var(--nav-bg);
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--border);
 }
@@ -42,7 +81,7 @@ section { padding: 7rem 0; }
 .container { max-width: 900px; margin: 0 auto; padding: 0 2rem; }
 
 #hero { min-height: 100vh; display: flex; align-items: center; padding-top: 5rem; background: var(--bg); position: relative; overflow: hidden; }
-#hero::before { content: ''; position: absolute; top: -120px; right: -120px; width: 520px; height: 520px; border-radius: 50%; background: var(--accent-light); opacity: 0.6; pointer-events: none; }
+#hero::before { content: ''; position: absolute; top: -120px; right: -120px; width: 520px; height: 520px; border-radius: 50%; background: var(--accent-soft); opacity: 0.6; pointer-events: none; }
 
 .hero-eyebrow { font-size: 0.8rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink3); margin-bottom: 1.25rem; }
 .hero-name { font-family: var(--serif); font-size: clamp(2.5rem, 7vw, 5rem); line-height: 1.05; color: var(--ink); margin-bottom: 1.5rem; }
@@ -52,8 +91,8 @@ section { padding: 7rem 0; }
 
 
 .btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.7rem 1.6rem; border-radius: 100px; font-size: 0.875rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; text-decoration: none; transition: all 0.2s; cursor: pointer; }
-.btn-primary { background: var(--accent); color: #fff; border: 1.5px solid var(--accent); }
-.btn-primary:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+.btn-primary { background: var(--accent); color: var(--on-accent); border: 1.5px solid var(--accent); }
+.btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
 .btn-outline { background: transparent; color: var(--ink); border: 1.5px solid var(--border); }
 .btn-outline:hover { border-color: var(--ink2); color: var(--accent); }
 
@@ -62,10 +101,10 @@ section { padding: 7rem 0; }
 .section-title em { font-style: italic; color: var(--accent); }
 
 /* STATS */
-.stats-strip { background: var(--accent); padding: 2.5rem 3rem; display: flex; justify-content: center; gap: 5rem; flex-wrap: wrap; }
+.stats-strip { background: var(--band); padding: 2.5rem 3rem; display: flex; justify-content: center; gap: 5rem; flex-wrap: wrap; }
 .stat { text-align: center; }
-.stat-num { font-family: var(--serif); font-size: 2.4rem; color: #fff; line-height: 1; margin-bottom: 0.3rem; }
-.stat-label { font-size: 0.75rem; color: rgba(255,255,255,0.75); letter-spacing: 0.06em; text-transform: uppercase; }
+.stat-num { font-family: var(--serif); font-size: 2.4rem; color: var(--on-deep); line-height: 1; margin-bottom: 0.3rem; }
+.stat-label { font-size: 0.75rem; color: var(--on-deep2); letter-spacing: 0.06em; text-transform: uppercase; }
 
 /* FEATURES */
 #features { background: var(--surface); }
@@ -77,38 +116,38 @@ section { padding: 7rem 0; }
 .feature-desc { font-size: 0.875rem; color: var(--ink2); font-weight: 300; line-height: 1.7; }
 
 /* HOW */
-#how { background: var(--accent); position: relative; overflow: hidden; }
-#how::before { content: ''; position: absolute; top: -30%; right: -10%; width: 50vw; height: 50vw; border-radius: 50%; background: rgba(255,255,255,0.06); pointer-events: none; }
-#how .section-label { color: rgba(255,255,255,0.7); }
-#how .section-title { color: #fff; }
-#how .section-title em { color: #FCA5A5; }
+#how { background: var(--band); position: relative; overflow: hidden; }
+#how::before { content: ''; position: absolute; top: -30%; right: -10%; width: 50vw; height: 50vw; border-radius: 50%; background: var(--deep-glow); pointer-events: none; }
+#how .section-label { color: var(--on-deep2); }
+#how .section-title { color: var(--on-deep); }
+#how .section-title em { color: var(--deep-em); }
 .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; position: relative; z-index: 1; }
-.step-num { font-family: var(--serif); font-size: 3rem; color: rgba(255,255,255,0.15); line-height: 1; margin-bottom: 0.75rem; }
-.step-title { font-size: 1rem; font-weight: 500; color: #fff; margin-bottom: 0.5rem; }
-.step-desc { font-size: 0.875rem; font-weight: 300; color: rgba(255,255,255,0.65); line-height: 1.7; }
+.step-num { font-family: var(--serif); font-size: 3rem; color: var(--on-deep3); line-height: 1; margin-bottom: 0.75rem; }
+.step-title { font-size: 1rem; font-weight: 500; color: var(--on-deep); margin-bottom: 0.5rem; }
+.step-desc { font-size: 0.875rem; font-weight: 300; color: var(--on-deep2); line-height: 1.7; }
 
 /* TECH */
 #tech { background: var(--surface2); }
 .tech-grid { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.5rem; }
 .tech-pill { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1.1rem; background: var(--surface); border: 1px solid var(--border); border-radius: 100px; font-size: 0.85rem; color: var(--ink2); transition: border-color 0.2s, background 0.2s; }
-.tech-pill:hover { border-color: var(--accent); background: var(--accent-light); color: var(--accent); }
+.tech-pill:hover { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
 
 /* DEMO */
-#demo { background: var(--ink); position: relative; overflow: hidden; }
-#demo::before { content: ''; position: absolute; bottom: -20%; left: -10%; width: 45vw; height: 45vw; border-radius: 50%; background: rgba(185,28,28,0.15); pointer-events: none; }
+#demo { background: var(--deep); position: relative; overflow: hidden; }
+#demo::before { content: ''; position: absolute; bottom: -20%; left: -10%; width: 45vw; height: 45vw; border-radius: 50%; background: var(--accent-soft); pointer-events: none; }
 .demo-inner { position: relative; z-index: 1; }
-#demo .section-label { color: #FCA5A5; }
-#demo .section-title { color: #fff; }
-#demo .section-title em { color: #FCA5A5; }
-#demo .section-sub { font-size: 0.95rem; font-weight: 300; color: rgba(255,255,255,0.55); max-width: 520px; line-height: 1.8; margin-bottom: 2.5rem; }
-.demo-link { display: inline-block; background: var(--accent); color: #fff; padding: 0.7rem 1.6rem; border-radius: 100px; text-decoration: none; font-size: 0.875rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; transition: background 0.2s; margin-bottom: 3rem; }
-.demo-link:hover { background: var(--accent-dark); }
+#demo .section-label { color: var(--deep-em); }
+#demo .section-title { color: var(--on-deep); }
+#demo .section-title em { color: var(--deep-em); }
+#demo .section-sub { font-size: 0.95rem; font-weight: 300; color: var(--on-deep2); max-width: 520px; line-height: 1.8; margin-bottom: 2.5rem; }
+.demo-link { display: inline-block; background: var(--accent); color: var(--on-accent); padding: 0.7rem 1.6rem; border-radius: 100px; text-decoration: none; font-size: 0.875rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; transition: background 0.2s; margin-bottom: 3rem; }
+.demo-link:hover { background: var(--accent-hover); }
 .demo-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.2rem; }
-.demo-step { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 2px; padding: 1.4rem; transition: border-color 0.2s; }
-.demo-step:hover { border-color: rgba(185,28,28,0.5); }
-.demo-step-num { background: var(--accent); color: #fff; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 500; margin-bottom: 0.8rem; }
-.demo-step h4 { font-size: 0.9rem; font-weight: 500; color: #fff; margin-bottom: 0.35rem; }
-.demo-step p { font-size: 0.82rem; color: rgba(255,255,255,0.55); line-height: 1.6; font-weight: 300; }
+.demo-step { background: var(--deep-glow); border: 1px solid var(--deep-line); border-radius: 2px; padding: 1.4rem; transition: border-color 0.2s; }
+.demo-step:hover { border-color: var(--deep-em); }
+.demo-step-num { background: var(--accent); color: var(--on-accent); width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 500; margin-bottom: 0.8rem; }
+.demo-step h4 { font-size: 0.9rem; font-weight: 500; color: var(--on-deep); margin-bottom: 0.35rem; }
+.demo-step p { font-size: 0.82rem; color: var(--on-deep2); line-height: 1.6; font-weight: 300; }
 
 /* GALLERY */
 #gallery { background: var(--surface); }
@@ -124,9 +163,9 @@ section { padding: 7rem 0; }
 #cta p { color: var(--ink2); max-width: 480px; margin: 0 auto 2.5rem; font-weight: 300; line-height: 1.8; }
 .cta-buttons { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
 
-footer { background: var(--ink); border-top: 1px solid rgba(255,255,255,0.06); text-align: center; padding: 1.5rem; font-size: 0.8rem; color: rgba(255,255,255,0.35); }
-footer a { color: rgba(255,255,255,0.5); text-decoration: none; }
-footer a:hover { color: #FCA5A5; }
+footer { background: var(--deep); border-top: 1px solid var(--deep-line); text-align: center; padding: 1.5rem; font-size: 0.8rem; color: var(--on-deep2); }
+footer a { color: var(--on-deep); text-decoration: none; }
+footer a:hover { color: var(--deep-em); }
 
 @media (max-width: 700px) {
   nav { padding: 1rem 1.5rem; }
@@ -151,15 +190,15 @@ footer a:hover { color: #FCA5A5; }
   .nav-links { display: none; }
 }
 /* Rebuild additions: dashboard preview, then-and-now, team. */
-.hero-shot { display: block; margin-top: 3rem; border-radius: 14px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 30px 60px -24px rgba(90,20,10,0.35); transition: transform 0.25s; }
+.hero-shot { display: block; margin-top: 3rem; border-radius: 14px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 30px 60px -24px var(--shadow); transition: transform 0.25s; }
 .hero-shot:hover { transform: translateY(-3px); }
 .hero-shot img { display: block; width: 100%; height: auto; }
 .section-sub { color: var(--ink2); max-width: 620px; margin: -1.5rem 0 2rem; }
-code { font-size: 0.85em; background: var(--surface2); padding: 0.05rem 0.35rem; border-radius: 4px; }
+code { font-size: 0.85em; color: var(--ink); background: var(--surface2); padding: 0.05rem 0.35rem; border-radius: 4px; }
 #story { background: var(--surface); }
 .then-now { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
 .era { border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; background: var(--bg); }
-.era.now { border-color: rgba(185,28,28,0.35); background: var(--accent-light); }
+.era.now { border-color: var(--accent-line); background: var(--accent-soft); }
 .era-label { font-size: 0.75rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem; }
 .era ul { padding-left: 1.1rem; display: grid; gap: 0.45rem; font-size: 0.93rem; color: var(--ink2); }
 .era strong { color: var(--ink); font-weight: 500; }
@@ -198,7 +237,10 @@ code { font-size: 0.85em; background: var(--surface2); padding: 0.05rem 0.35rem;
       <a class="btn btn-outline" href="https://github.com/roopa-srinivas/COVIDVaccineTracker" target="_blank" rel="noopener">View on GitHub</a>
     </div>
     <a class="hero-shot" href="dashboard/" aria-label="Open the dashboard">
-      <img src="dashboard-preview.jpg" width="1504" height="812" alt="The dashboard: a US map colored by percent fully vaccinated in December 2021, a timeline slider, and US totals such as 59.8% fully vaccinated and 469 million doses given."/>
+      <picture>
+        <source srcset="dashboard-preview.jpg" media="(prefers-color-scheme: light)"/>
+        <img src="dashboard-preview-dark.jpg" width="1504" height="812" alt="The dashboard: a US map colored by percent fully vaccinated in December 2021, a timeline slider, and US totals such as 59.8% fully vaccinated and 469 million doses given."/>
+      </picture>
     </a>
   </div>
 </section>
