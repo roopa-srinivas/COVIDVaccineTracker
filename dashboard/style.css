@@ -1,32 +1,71 @@
-/* Matches the project page: cream paper, deep red accent, DM Serif headings.
+/* Matches the project page: public-health teal, DM Serif headings.
    Numbers stay in the sans face. */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* Public-health teal. Dark by default; light for devices set to light mode.
+   Chart colors are validated per mode (dataviz palette checks), not inverted. */
 :root {
-  color-scheme: light;
-  --bg: #FDF8F0;
-  --surface: #FFFFFF;
-  --surface2: #F5EDE0;
-  --ink: #1A0A00;
-  --ink2: #5C4033;
-  --ink3: #8A6A5A;
-  --accent: #B91C1C;
-  --border: rgba(90,20,10,0.12);
-  --grid: #EEE6DA;
-  --axis: #C9BBAA;
-  /* chart series (validated: categorical slots 1 and 2) */
-  --series-1: #2a78d6;
-  --series-2: #eb6834;
-  --up: #9c2a12;
-  --down: #006300;
+  color-scheme: dark;
+  --bg: #0A1716;
+  --surface: #10211F;
+  --surface2: #152A27;
+  --ink: #E6F4F2;
+  --ink2: #A9C6C2;
+  --ink3: #7E9C98;
+  --accent: #2EC4B6;
+  --accent-hover: #5FD8CB;
+  --on-accent: #032420;
+  --border: rgba(230,244,242,0.12);
+  --top-bg: rgba(10,23,22,0.95);
+  --grid: #1B3330;
+  --axis: #2E4A46;
+  --shadow: rgba(0,0,0,0.5);
+  --map-edge: #10211F;
+  --map-nodata: #22322F;
+  /* chart series: categorical slots 1 and 2, dark steps */
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --up: #FF8A65;
+  --down: #6FCF7F;
+  /* sequential ramps, low values recede toward the dark surface */
+  --vax-1: #0d366b; --vax-2: #184f95; --vax-3: #256abf; --vax-4: #3987e5; --vax-5: #6da7ec; --vax-6: #9ec5f4; --vax-7: #cde2fb;
+  --burden-1: #6e2c0d; --burden-2: #9c4219; --burden-3: #c95a28; --burden-4: #e57746; --burden-5: #f09d74; --burden-6: #f6c2a5; --burden-7: #fbe3d6;
   --serif: 'DM Serif Display', Georgia, serif;
   --sans: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    color-scheme: light;
+    --bg: #F4FAF9;
+    --surface: #FFFFFF;
+    --surface2: #E8F3F1;
+    --ink: #0B2522;
+    --ink2: #3D5C58;
+    --ink3: #587470;
+    --accent: #0F766E;
+    --accent-hover: #115E59;
+    --on-accent: #FFFFFF;
+    --border: rgba(11,37,34,0.12);
+    --top-bg: rgba(244,250,249,0.95);
+    --grid: #E3EEEC;
+    --axis: #B9CCC9;
+    --shadow: rgba(11,37,34,0.14);
+    --map-edge: #FFFFFF;
+    --map-nodata: #E6EEEC;
+    --series-1: #2a78d6;
+    --series-2: #eb6834;
+    --up: #9c2a12;
+    --down: #006300;
+    /* low values recede toward the light surface */
+    --vax-1: #cde2fb; --vax-2: #9ec5f4; --vax-3: #6da7ec; --vax-4: #3987e5; --vax-5: #256abf; --vax-6: #184f95; --vax-7: #0d366b;
+    --burden-1: #fbe3d6; --burden-2: #f6c2a5; --burden-3: #f09d74; --burden-4: #e57746; --burden-5: #c95a28; --burden-6: #9c4219; --burden-7: #6e2c0d;
+  }
 }
 html { -webkit-text-size-adjust: 100%; }
 body { font-family: var(--sans); background: var(--bg); color: var(--ink); font-size: 15px; line-height: 1.55; overflow-x: hidden; }
 a { color: var(--accent); }
 :focus-visible { outline: 2px solid var(--series-1); outline-offset: 2px; border-radius: 4px; }
 
-.top { border-bottom: 1px solid var(--border); background: rgba(253,248,240,0.95); }
+.top { border-bottom: 1px solid var(--border); background: var(--top-bg); }
 .top-inner { max-width: 1240px; margin: 0 auto; padding: 1.1rem 1.5rem; display: flex; align-items: center; gap: 1.25rem; }
 .back { font-size: 0.85rem; color: var(--ink2); text-decoration: none; border: 1px solid var(--border); border-radius: 999px; padding: 0.35rem 0.9rem; white-space: nowrap; }
 .back:hover { color: var(--accent); border-color: var(--accent); }
@@ -43,8 +82,8 @@ main { max-width: 1240px; margin: 0 auto; padding: 1.25rem 1.5rem 3rem; }
 select { font: inherit; font-size: 0.92rem; color: var(--ink); background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 0.5rem 0.7rem; max-width: 100%; }
 .timeline { display: flex; align-items: center; gap: 0.6rem; }
 .timeline input { flex: 1; accent-color: var(--accent); min-width: 0; }
-.play { width: 38px; height: 38px; flex-shrink: 0; border-radius: 50%; border: none; background: var(--accent); color: #fff; font-size: 0.9rem; cursor: pointer; }
-.play:hover { background: #991616; }
+.play { width: 38px; height: 38px; flex-shrink: 0; border-radius: 50%; border: none; background: var(--accent); color: var(--on-accent); font-size: 0.9rem; cursor: pointer; }
+.play:hover { background: var(--accent-hover); }
 
 .grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 1rem; margin-bottom: 1rem; align-items: start; }
 .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
@@ -57,10 +96,10 @@ select { font: inherit; font-size: 0.92rem; color: var(--ink); background: var(-
 
 .map-wrap { position: relative; }
 #map { width: 100%; height: auto; display: block; }
-#map .state { stroke: #fff; stroke-width: 1; cursor: pointer; transition: opacity 0.15s; }
+#map .state { stroke: var(--map-edge); stroke-width: 1; cursor: pointer; transition: opacity 0.15s; }
 #map .state:hover, #map .state:focus { stroke: var(--ink); stroke-width: 1.5; outline: none; }
 #map .state.selected { stroke: var(--ink); stroke-width: 2.5; }
-#map .state.nodata { fill: #EFE9E0; }
+#map .state.nodata { fill: var(--map-nodata); }
 .legend { display: flex; align-items: flex-end; gap: 2px; margin-top: 0.5rem; flex-wrap: wrap; }
 .legend .swatch { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 34px; max-width: 70px; }
 .legend .swatch span:first-child { height: 10px; border-radius: 2px; }
@@ -119,7 +158,7 @@ td:last-child, th:last-child { text-align: right; font-variant-numeric: tabular-
 .sources { font-size: 0.8rem; color: var(--ink2); display: grid; gap: 0.5rem; max-width: 900px; }
 .sources code { font-size: 0.78rem; background: var(--surface2); padding: 0.05rem 0.3rem; border-radius: 4px; }
 
-.tooltip { position: fixed; z-index: 50; pointer-events: none; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 6px 20px rgba(26,10,0,0.14); padding: 0.55rem 0.7rem; font-size: 0.8rem; min-width: 150px; max-width: 240px; }
+.tooltip { position: fixed; z-index: 50; pointer-events: none; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 6px 20px var(--shadow); padding: 0.55rem 0.7rem; font-size: 0.8rem; min-width: 150px; max-width: 240px; }
 .tooltip .tt-title { font-weight: 700; margin-bottom: 0.25rem; }
 .tooltip .tt-row { display: flex; align-items: center; gap: 0.45rem; }
 .tooltip .tt-row b { font-size: 0.95rem; font-variant-numeric: tabular-nums; }

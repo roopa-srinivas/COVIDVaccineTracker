@@ -1,8 +1,11 @@
 // COVID Vaccine Tracker, web edition. Reads the weekly snapshot built by
 // scripts/build_data.py and the US state shapes from us-atlas.
 
-const BLUES = ['#cde2fb', '#9ec5f4', '#6da7ec', '#3987e5', '#256abf', '#184f95', '#0d366b'];
-const ORANGES = ['#fbe3d6', '#f6c2a5', '#f09d74', '#e57746', '#c95a28', '#9c4219', '#6e2c0d'];
+// Seven steps each, lowest to highest. The hex values live in style.css so
+// light and dark mode each get their own validated steps.
+const steps = (name) => Array.from({ length: 7 }, (_, i) => `var(--${name}-${i + 1})`);
+const BLUES = steps('vax');
+const ORANGES = steps('burden');
 
 // Fixed thresholds (not quantiles) so colors mean the same thing in every week
 // of the timeline.
@@ -101,7 +104,7 @@ function drawMap() {
         .on('click', (_, f) => select(f.id))
         .on('keydown', (event, f) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); select(f.id); } })
     )
-    .attr('fill', (f) => color(state.metric, value(f.id, state.metric, state.week)) ?? '#EFE9E0')
+    .attr('fill', (f) => color(state.metric, value(f.id, state.metric, state.week)) ?? 'var(--map-nodata)')
     .classed('nodata', (f) => value(f.id, state.metric, state.week) == null)
     .classed('selected', (f) => f.id === state.region)
     .attr('aria-label', (f) => `${data.regions[f.id].name}: ${display(state.metric, value(f.id, state.metric, state.week))}`);
